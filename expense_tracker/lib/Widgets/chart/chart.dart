@@ -34,13 +34,13 @@ class Chart extends StatelessWidget {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       padding: const EdgeInsets.symmetric(
         vertical: 16,
         horizontal: 8,
       ),
       width: double.infinity,
-      height: 180,
+      height: 212,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         gradient: LinearGradient(
@@ -52,43 +52,49 @@ class Chart extends StatelessWidget {
           end: Alignment.topCenter,
         ),
       ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                for (final bucket in buckets) // alternative to map()
-                  ChartBar(
-                    fill: bucket.totalExpenses == 0
-                        ? 0
-                        : bucket.totalExpenses / maxTotalExpense,
-                  )
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: buckets
-                .map(
-                  (bucket) => Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Icon(
-                        categoryIcons[bucket.category],
-                        color: isDarkMode
-                            ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.7),
+      /// here we need a SingleChildScrollView to wrap the child for dealing with softkeyboard show up
+      child: SingleChildScrollView(
+        child: SizedBox(
+          height: 180,
+          child: Column(
+            children: [
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    for (final bucket in buckets) // alternative to map()
+                      ChartBar(
+                        fill: bucket.totalExpenses == 0
+                            ? 0
+                            : bucket.totalExpenses / maxTotalExpense,
+                      )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: buckets
+                    .map(
+                      (bucket) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Icon(
+                            categoryIcons[bucket.category],
+                            color: isDarkMode
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.7),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-                .toList(),
-          )
-        ],
+                    )
+                    .toList(),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

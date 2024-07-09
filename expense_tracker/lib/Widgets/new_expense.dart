@@ -102,95 +102,101 @@ class _NewExpenseState extends State<NewExpense> {
         ? 'Please select date'
         : formatter.format(_selectedDate!);
 
-    return Padding(
-      padding:
-          // const EdgeInsets.all(16),
-          EdgeInsets.fromLTRB(
-              bottomSheetPadding,
-              AppBar().preferredSize.height,
-              bottomSheetPadding,
-              MediaQuery.of(context).viewInsets.bottom + bottomSheetPadding),
-      child: Column(
-        // mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            // onChanged: onTitleChange,
-            controller: _titleController,
-            maxLength: 50,
-            // keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              label: Text('Title'),
-            ),
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+
+    return SizedBox(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            bottomSheetPadding,
+            AppBar().preferredSize.height,
+            bottomSheetPadding,
+            keyboardSpace + bottomSheetPadding,
           ),
-          Row(
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: _amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefixText: '¥',
-                    label: Text('Amount'),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r"[0-9.]"))
-                  ],
+              TextField(
+                // onChanged: onTitleChange,
+                controller: _titleController,
+                maxLength: 50,
+                // keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  label: Text('Title'),
                 ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _amountController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        prefixText: '¥',
+                        label: Text('Amount'),
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r"[0-9.]"))
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(formattedDate),
+                        IconButton(
+                          onPressed: _onCalendarPressed,
+                          icon: const Icon(Icons.date_range),
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
               const SizedBox(
-                width: 16,
+                height: 20,
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(formattedDate),
-                    IconButton(
-                      onPressed: _onCalendarPressed,
-                      icon: const Icon(Icons.date_range),
-                    )
-                  ],
-                ),
+              Row(
+                children: [
+                  DropdownButton(
+                    value: _selectedCategory,
+                    items: Category.values
+                        .map(
+                          (cat) => DropdownMenuItem(
+                            value: cat,
+                            child: Text(
+                              cat.name.toString().toUpperCase(),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: _onCategoryChanged,
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('cancel'),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  ElevatedButton(
+                    onPressed: _onSubmit,
+                    child: const Text('save'),
+                  ),
+                ],
               )
             ],
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              DropdownButton(
-                value: _selectedCategory,
-                items: Category.values
-                    .map(
-                      (cat) => DropdownMenuItem(
-                        value: cat,
-                        child: Text(
-                          cat.name.toString().toUpperCase(),
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: _onCategoryChanged,
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('cancel'),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              ElevatedButton(
-                onPressed: _onSubmit,
-                child: const Text('save'),
-              ),
-            ],
-          )
-        ],
+        ),
       ),
     );
   }

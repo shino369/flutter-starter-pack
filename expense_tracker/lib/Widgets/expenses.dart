@@ -38,6 +38,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _onAddPressed() {
     showModalBottomSheet(
+      useSafeArea: true,
       context: context,
       isScrollControlled: true,
       builder: (ctx) => NewExpense(onAddExpense: _onAddNewExpense),
@@ -69,6 +70,8 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    var landscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
     Widget mainContent = _registeredExpense.isNotEmpty
         ? ExpensesList(
             expenses: _registeredExpense,
@@ -85,12 +88,19 @@ class _ExpensesState extends State<Expenses> {
           IconButton(onPressed: _onAddPressed, icon: const Icon(Icons.add)),
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _registeredExpense),
-          Expanded(child: mainContent),
-        ],
-      ),
+      body: landscape
+          ? Row(
+              children: [
+                Expanded(child: Chart(expenses: _registeredExpense)),
+                Expanded(child: mainContent),
+              ],
+            )
+          : Column(
+              children: [
+                Chart(expenses: _registeredExpense),
+                Expanded(child: mainContent),
+              ],
+            ),
     );
   }
 }
