@@ -1,10 +1,13 @@
 import 'package:expense_tracker/model/expense.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-const double bottomSheetPadding = 24;
+const double bottomSheetPadding = 16;
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense({super.key, required this.onAddExpense});
+
+  final void Function(Expense expense) onAddExpense;
 
   @override
   State<NewExpense> createState() {
@@ -15,14 +18,14 @@ class NewExpense extends StatefulWidget {
 class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
-  DateTime? _selectedDate;
+  DateTime? _selectedDate = DateTime.now();
   Category? _selectedCategory = Category.leisure;
 
   // void onTitleChange(String value) {
   //   print(value);
   // }
 
-  Future<void> onCalendarPressed() async {
+  Future<void> _onCalendarPressed() async {
     final now = DateTime.now();
     final selected = await showDatePicker(
       context: context,
@@ -40,7 +43,7 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  void onCategoryChanged(Category? value) {
+  void _onCategoryChanged(Category? value) {
     if (value == null) {
       return;
     }
@@ -48,6 +51,42 @@ class _NewExpenseState extends State<NewExpense> {
     setState(() {
       _selectedCategory = value;
     });
+  }
+
+  void _onSubmit() {
+    final text = _titleController.text.trim();
+    final amount = double.tryParse(_amountController.text);
+    print('amount: $amount');
+    final isAmountValid = amount != null && amount > 0;
+    if (text.isEmpty || !isAmountValid || _selectedDate == null) {
+      // show error
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Invalid Input'),
+          content: const Text(
+              'Please make sure a valid amount, date and category was entered.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            )
+          ],
+        ),
+      );
+
+      return;
+    }
+
+    widget.onAddExpense(Expense(
+      title: _titleController.text.trim(),
+      amount: amount,
+      date: _selectedDate!,
+      category: _selectedCategory!,
+    ));
+    Navigator.pop(context);
   }
 
   @override
@@ -62,6 +101,7 @@ class _NewExpenseState extends State<NewExpense> {
     final String formattedDate = _selectedDate == null
         ? 'Please select date'
         : formatter.format(_selectedDate!);
+
     return Padding(
       padding:
           // const EdgeInsets.all(16),
@@ -89,9 +129,12 @@ class _NewExpenseState extends State<NewExpense> {
                   controller: _amountController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    prefixText: '\$ ',
+                    prefixText: '¥',
                     label: Text('Amount'),
                   ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r"[0-9.]"))
+                  ],
                 ),
               ),
               const SizedBox(
@@ -104,7 +147,7 @@ class _NewExpenseState extends State<NewExpense> {
                   children: [
                     Text(formattedDate),
                     IconButton(
-                      onPressed: onCalendarPressed,
+                      onPressed: _onCalendarPressed,
                       icon: const Icon(Icons.date_range),
                     )
                   ],
@@ -129,7 +172,7 @@ class _NewExpenseState extends State<NewExpense> {
                       ),
                     )
                     .toList(),
-                onChanged: onCategoryChanged,
+                onChanged: _onCategoryChanged,
               ),
               const Spacer(),
               TextButton(
@@ -142,9 +185,7 @@ class _NewExpenseState extends State<NewExpense> {
                 width: 8,
               ),
               ElevatedButton(
-                onPressed: () {
-                  // print(_titleController.text);
-                },
+                onPressed: _onSubmit,
                 child: const Text('save'),
               ),
             ],
