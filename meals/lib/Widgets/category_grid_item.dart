@@ -38,7 +38,7 @@ class CategoryGridItem extends StatelessWidget {
                   placeholder: MemoryImage(kTransparentImage),
                   image: NetworkImage(firstMeal!.imageUrl),
                   fit: BoxFit.cover,
-                  height: 200,
+                  height: 100,
                   width: double.infinity,
                 ),
               )
