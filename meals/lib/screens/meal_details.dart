@@ -21,18 +21,45 @@ class MealDetailsScreen extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(title: Text(meal.title), actions: [
           IconButton(
-            onPressed: () {
-              final res = favoriteController.toggleMealFavoriteStatus(meal);
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                      res ? 'added to favourite' : 'removed from favourite'),
+              onPressed: () {
+                final res = favoriteController.toggleMealFavoriteStatus(meal);
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        res ? 'added to favourite' : 'removed from favourite'),
+                  ),
+                );
+              },
+              icon: AnimatedSwitcher(
+                // will trigger whenever isFavourite state changed
+                duration: const Duration(milliseconds: 800),
+                transitionBuilder: (child, animation) {
+                  // return RotationTransition(
+                  //   turns: Tween<double>(begin: 0.5, end: 1).animate(
+                  //     CurvedAnimation(
+                  //       parent: animation,
+                  //       curve: Curves.easeInOut,
+                  //     ),
+                  //   ),
+                  //   child: child,
+                  // );
+
+                  return ScaleTransition(
+                    scale: Tween<double>(begin: 0.5, end: 1).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.bounceInOut,
+                      ),
+                    ),
+                    child: child,
+                  );
+                },
+                child: Icon(
+                  isFavourite ? Icons.star : Icons.star_border,
+                  key: ValueKey(isFavourite),
                 ),
-              );
-            },
-            icon: Icon(isFavourite ? Icons.star : Icons.star_border),
-          )
+              ))
         ]),
         body: SingleChildScrollView(
           child: Column(
