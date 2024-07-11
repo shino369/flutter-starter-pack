@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:meals/data/dummy_data.dart';
@@ -70,16 +71,18 @@ class _CategoriesScreenState extends State<CategoriesScreen>
           crossAxisSpacing: 20,
           mainAxisSpacing: 20,
         ),
-        children: [
-          // availableCategories.map((category) => CategoryGridItem(category: category)).toList()
-          for (final category in availableCategories)
-            CategoryGridItem(
-              category: category,
-              onSelectCategory: () {
-                _selectCategory(context, category);
-              },
-            )
-        ],
+        children: availableCategories.map((category) {
+          final firstMeal = widget.availableMeals.firstWhereOrNull(
+            (meal) => meal.categories.contains(category.id),
+          );
+          return CategoryGridItem(
+            category: category,
+            onSelectCategory: () {
+              _selectCategory(context, category);
+            },
+            firstMeal: firstMeal,
+          );
+        }).toList(),
       ),
       builder: (context, child) =>
           // Padding(
