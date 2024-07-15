@@ -1,3 +1,4 @@
+import 'package:favorite_places/configs/app_configs.dart';
 import 'package:flutter/material.dart';
 
 import 'package:favorite_places/screens/map.dart';
@@ -11,7 +12,7 @@ class PlaceDetailScreen extends StatelessWidget {
   String get locationImage {
     final lat = place.location.latitude;
     final lng = place.location.longitude;
-    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng=&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=AIzaSyDLcwxUggpPZo8lcbH0TB4Crq5SJjtj4ag';
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng=&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=${AppConfigs.googleMapAPI}';
   }
 
   @override
