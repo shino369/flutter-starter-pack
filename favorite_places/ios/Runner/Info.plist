@@ -8,7 +8,8 @@
 	<string>Image Picker</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Image Picker</string>
-
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>location</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
